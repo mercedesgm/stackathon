@@ -8,14 +8,6 @@ const Comment = db.define('comment', {
         validate: {
             notEmpty: true
         }
-    },
-    userId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    postId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
     }
 })
 

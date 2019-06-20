@@ -9,11 +9,11 @@ const Post = db.define('post', {
         }
     },
     dirtyImage: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BLOB,
         allowNull: false
     },
     cleanImage: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.BLOB,
     },
     latitude: {
         type: Sequelize.INTEGER,
@@ -22,9 +22,6 @@ const Post = db.define('post', {
     longitude: {
         type: Sequelize.INTEGER,
         allowNull: false
-    },
-    userId: {
-        type: Sequelize.INTEGER
     }
 })
 
