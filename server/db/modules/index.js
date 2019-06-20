@@ -4,6 +4,10 @@ const User = require('./user')
 
 // assosiations
 
+Comment.belongsTo(Post)
+Comment.belongsTo(User)
+Post.belongsTo(User)
+
 module.exports = {
     Post,
     Comment,
