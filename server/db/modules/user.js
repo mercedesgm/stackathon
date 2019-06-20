@@ -3,11 +3,13 @@ const db = require('../db')
 
 const User = db.define('user', {
     googleId: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
     },
     name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     }
 })
 
