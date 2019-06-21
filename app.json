@@ -28,7 +28,7 @@
     },
     "android": {
       "config": {
-        "googleMaps": {"apiKey": "AIzaSyAX8JHBhoSMuTrXrUDOP7bhkwowsEJ0mHU"}
+        "googleMaps": {"apiKey": "process.env.REACT_APP_GOOGLE_MAP_API_KEY"}
       }
     }
   }
