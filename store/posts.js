@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+const ip = '192.168.1.106:8080'
+
 const GOT_MY_POSTS = 'GOT_MY_POSTS';
 const GOT_ALL_POSTS = 'GOT_ALL_POSTS';
+
 
 const defaultPosts = {
     myPosts: [],
@@ -14,7 +17,7 @@ const gotAllPosts = (posts) => ({type: GOT_ALL_POSTS, posts})
 export const getAllPosts = () => {
   return async dispatch => {
     try {
-      const {data} = await axios.get('http://localhost:8080/api/posts')
+      const {data} = await axios.get(`http://${ip}/api/posts`)
       dispatch(gotAllPosts(data))
     } catch (error) {
       console.log(error)
@@ -25,7 +28,7 @@ export const getAllPosts = () => {
 export const getMyPosts = (id) => {
   return async dispatch => {
     try {
-      const {data} =  await axios.get(`http://localhost:8080/api/posts/${id}`)
+      const {data} =  await axios.get(`http://${ip}/api/posts/${id}`)
       dispatch(gotMyPosts(data))
     } catch (error) {
       console.log(error)
@@ -36,9 +39,9 @@ export const getMyPosts = (id) => {
 export const addPost = (post, id) => {
   return async dispatch => {
     try {
-      await axios.post(`http://localhost:8080/api/posts`, post)
+      await axios.post(`http://${ip}/api/posts`, post)
       dispatch(getAllPosts())
-      dispatch(getMyPosts(id))
+      // dispatch(getMyPosts(id))
     } catch (error) {
       console.log(error)
     }
@@ -48,7 +51,7 @@ export const addPost = (post, id) => {
 export const markClean = (cleanImage, postId, userId) => {
   return async dispatch => {
     try {
-      await axios.put(`http://localhost:8080/api/posts/clean/${postId}`, cleanImage)
+      await axios.put(`http://${ip}/api/posts/clean/${postId}`, cleanImage)
       dispatch(getAllPosts())
       if (userId) {
         dispatch(getMyPosts(userId))
@@ -62,7 +65,7 @@ export const markClean = (cleanImage, postId, userId) => {
 export const deletePost = (id, userId) => {
   return async dispatch => {
     try {
-      await axios.delete(`http://localhost:8080/api/posts/${id}`)
+      await axios.delete(`http://${ip}:8080/api/posts/${id}`)
       dispatch(getAllPosts())
       dispatch(getMyPosts(userId))
     } catch (error) {
