@@ -10,21 +10,24 @@ import {
   View,
   Dimensions
 } from 'react-native';
+import { WebView } from 'react-native-webview';
+import Post from './Post'
 
 const CustomCallout = (props) => {
     const post = props.post
     return (
       <View>
-        <Image source={{uri: post.dirtyImage}}
-        style={{width: 100, height: 100}}/>
+        <WebView source={{uri: post.dirtyImage}}
+        scalesPageToFit={true}
+        style={styles.img}/>
         <Text>{post.title}</Text>
       </View>
     )
 }
 const styles = StyleSheet.create({
   img: {
-      width: 100,
-      height: 100,
+      width: 200,
+      height: 150,
   }
 });
 

@@ -10,6 +10,7 @@ import {REACT_AWS3_ACCESS_KEY, REACT_AWS3_SECRET_ACCESS_KEY} from '../secrets'
 import {connect} from 'react-redux'
 import {addPost} from '../store/posts'
 
+
 class AddForm extends React.Component {
     constructor(props) {
         super(props)
@@ -29,7 +30,7 @@ class AddForm extends React.Component {
     
     pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
         })
@@ -43,7 +44,7 @@ class AddForm extends React.Component {
         const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
         if (status === 'granted') {
           let result = await Location.getCurrentPositionAsync({ enableHighAccuracy: false });
-          this.setState({longitude: result.coords.longitude * 10000000, latitude: result.coords.latitude * 10000000})
+          this.setState({longitude: result.coords.longitude, latitude: result.coords.latitude})
         } else {
           throw new Error('Location permission not granted');
         }
@@ -70,8 +71,16 @@ class AddForm extends React.Component {
         this.props.submitPost({
             title: this.state.title,
             dirtyImage: `https://detrash.s3.amazonaws.com/${imgName}`,
-            latitude: this.state.latitude,
-            longitude: this.state.longitude,
+            latitude: String(this.state.latitude),
+            longitude: String(this.state.longitude),
+        })
+        this.props.navigation.navigate('Home')
+        
+        this.setState({            
+            title: "",
+            img: null,
+            latitude: 0,
+            longitude: 0
         })
     }
 
@@ -95,7 +104,7 @@ class AddForm extends React.Component {
                 />
                 )}
                 <Button title="Choose Photo" onPress={this.pickImage} />
-                <Button title="submit" onPress={this.handleSubmit}/>
+                <Button title="Submit" onPress={this.handleSubmit} disabled={!(this.state.title.length && this.state.img !== null)}/>
 
             </Form>
         )

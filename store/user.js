@@ -3,17 +3,39 @@ import axios from 'axios'
 const GOT_USER = 'GOT_USER';
 const REMOVE_USER = 'REMOVE_USER';
 
+const ip = '192.168.1.106:8080'
+
 const defaultUser = {};
 
 const gotUser = (user) => ({type: GOT_USER, user})
 const removeUser = () => ({type: REMOVE_USER})
 
-// THUNKS
-// GET ME
-// LOGIN
-// LOGOUT
-// CHANGE NAME
+export const me = () => async dispatch => {
+  try {
+    const res = await axios.get('/auth/me')
+    dispatch(gotUser(res.data || defaultUser))
+  } catch (err) {
+    console.error(err)
+  }
+}
 
+export const auth = (email, password, method) => async dispatch => {
+  try {
+    let {data} = await axios.post(`http://${ip}/auth/${method}`, {email, password})
+    dispatch(gotUser({id: data.id, email}))
+  } catch (authError) {
+    return dispatch(gotUser({error: authError}))
+  }
+}
+
+export const logout = () => async dispatch => {
+  try {
+    dispatch(removeUser())
+    await axios.post(`http://${ip}/auth/logout`)
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 export default function(state = defaultUser, action) {
     switch (action.type) {

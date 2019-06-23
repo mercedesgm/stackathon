@@ -13,7 +13,7 @@ import {
 import {connect} from 'react-redux'
 import { MonoText } from '../components/StyledText';
 import {getAllPosts} from '../store/posts'
-import {Map} from '../components/Map'
+import Map from '../components/Map'
 
 class HomeScreen extends React.Component {
   componentDidMount() {
@@ -21,17 +21,22 @@ class HomeScreen extends React.Component {
   }
 
   render () {
-    const posts = this.props.posts.allPosts
-    return (
-      <View>
-        <Map posts={posts} />
-      </View>
-    )
+    if (!this.props.user.id) {
+      return this.props.navigation.navigate('Login')
+    } else {
+      const posts = this.props.posts.allPosts
+      return (
+        <View>
+          <Map posts={posts}/>
+        </View>
+      )
+    }
   }
 }
 
 const mapStateToProps = state => ({
-  posts: state.posts
+  posts: state.posts,
+  user: state.user
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -43,7 +48,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
 
 
 HomeScreen.navigationOptions = {
-  header: null,
+  header: "Sup",
 };
 
 function DevelopmentModeNotice() {

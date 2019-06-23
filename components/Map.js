@@ -13,10 +13,10 @@ import {
 } from 'react-native';
 import MapView, {Marker, Callout} from 'react-native-maps';
 import CustomCallout from './CustomCallout'
+import { withNavigation } from 'react-navigation';
 
-export const Map = (props) => {
+const Map = (props) => {
     const posts = props.posts
-    console.log('postssss', posts)
     return (
         <MapView
             style={styles.map}
@@ -28,10 +28,12 @@ export const Map = (props) => {
             }}
         >
             {posts.map(post => {
-            const latlng = {latitude: post.latitude / 10000000, longitude: post.longitude / 10000000}
+            const latlng = {latitude: Number(post.latitude), longitude: Number(post.longitude)}
             return (
-                <Marker coordinate={latlng} key={post.id}>
-                    <CustomCallout post={post} />
+                <Marker key={post.id} coordinate={latlng}>
+                  <Callout onPress={() => props.navigation.navigate('Post', {id: post.id})}>
+                    <CustomCallout post={post} navigate={props.navigate}/>
+                  </Callout>
                  </Marker>
             )
             })}
@@ -54,5 +56,6 @@ const styles = StyleSheet.create({
         borderColor: "#F44336",
         borderWidth: 2,
     }
-  });
-  
+});
+
+export default withNavigation(Map)
