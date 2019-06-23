@@ -10,28 +10,45 @@ import {
   View,
   Dimensions
 } from 'react-native';
-import MapView from 'react-native-maps';
-
+import {connect} from 'react-redux'
 import { MonoText } from '../components/StyledText';
+import {getAllPosts} from '../store/posts'
+import Map from '../components/Map'
 
-export default function HomeScreen() {
-  return (
-    <View style={styles.container}>
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: 40.7130,
-            longitude: -74.0060,
-            latitudeDelta: 0.3,
-            longitudeDelta: 0.01,
-          }}
-        />
-    </View>
-  );
+class HomeScreen extends React.Component {
+  componentDidMount() {
+    this.props.getPosts()
+  }
+
+  render () {
+    if (!this.props.user.id) {
+      return this.props.navigation.navigate('Login')
+    } else {
+      const posts = this.props.posts.allPosts
+      return (
+        <View>
+          <Map posts={posts}/>
+        </View>
+      )
+    }
+  }
 }
 
+const mapStateToProps = state => ({
+  posts: state.posts,
+  user: state.user
+})
+
+const mapDispatchToProps = dispatch => ({
+  getPosts: () => dispatch(getAllPosts())
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
+
+
 HomeScreen.navigationOptions = {
-  header: null,
+  header: "Sup",
 };
 
 function DevelopmentModeNotice() {
@@ -156,8 +173,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2e78b7',
   },
-  map: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height
-  }
 });
