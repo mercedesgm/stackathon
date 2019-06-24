@@ -14,25 +14,40 @@ import {connect} from 'react-redux'
 import { MonoText } from '../components/StyledText';
 import {getAllPosts} from '../store/posts'
 import Map from '../components/Map'
+import { Icon } from 'react-native-elements'
 
 class HomeScreen extends React.Component {
   componentDidMount() {
-    this.props.getPosts()
-  }
-
-  render () {
     if (!this.props.user.id) {
       return this.props.navigation.navigate('Login')
-    } else {
-      const posts = this.props.posts.allPosts
-      return (
-        <View>
-          <Map posts={posts}/>
+    } 
+    this.props.getPosts()
+    this.interval = setInterval(() => this.props.getPosts(), 5000)
+  }
+  render () {
+    const posts = this.props.posts.allPosts
+    return (
+      <View>
+        <Map posts={posts}/>
+        <View style={{position: "absolute", top: 30, right: 10}}>
+          <Icon name="account-circle" reverse  
+            onPress={() => {
+              this.props.navigation.navigate('Profile')
+              clearInterval(this.interval)
+            }}
+          />
+          <Icon name="add-circle-outline" reverse
+            onPress={() => {
+              this.props.navigation.navigate('Add')
+              clearInterval(this.interval)
+            }}
+          />
         </View>
-      )
-    }
+      </View>
+    )
   }
 }
+
 
 const mapStateToProps = state => ({
   posts: state.posts,
@@ -48,47 +63,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
 
 
 HomeScreen.navigationOptions = {
-  header: "Sup",
+  header: null,
 };
-
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
-      </Text>
-    );
-  }
-}
-
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/development-mode/'
-  );
-}
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-  );
-}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
   },
   developmentModeText: {

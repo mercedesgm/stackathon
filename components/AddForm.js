@@ -1,5 +1,4 @@
-import { View, Switch, TextInput, Button, Text, Image } from 'react-native'
-import Slider from '@react-native-community/slider'
+import { View, Button, ActivityIndicator, Dimensions } from 'react-native'
 import React from 'react'
 import Form from 'react-native-form'
 import * as ImagePicker from 'expo-image-picker'
@@ -9,6 +8,8 @@ import { RNS3 } from 'react-native-aws3'
 import {REACT_AWS3_ACCESS_KEY, REACT_AWS3_SECRET_ACCESS_KEY} from '../secrets'
 import {connect} from 'react-redux'
 import {addPost} from '../store/posts'
+import {Header, Icon, Input, Image} from 'react-native-elements'
+import user from '../store/user';
 
 
 class AddForm extends React.Component {
@@ -73,6 +74,7 @@ class AddForm extends React.Component {
             dirtyImage: `https://detrash.s3.amazonaws.com/${imgName}`,
             latitude: String(this.state.latitude),
             longitude: String(this.state.longitude),
+            userId: this.props.userId
         })
         this.props.navigation.navigate('Home')
         
@@ -80,39 +82,79 @@ class AddForm extends React.Component {
             title: "",
             img: null,
             latitude: 0,
-            longitude: 0
+            longitude: 0,
         })
     }
 
     render() {
         return (
             <Form>
-                <Text>Title</Text>
-                <TextInput
-                    style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                <Header
+                    leftComponent={
+                        <Icon name="map" onPress={() => {
+                            this.props.navigation.navigate('Home')
+                            this.setState({            
+                                title: "",
+                                img: null,
+                                latitude: 0,
+                                longitude: 0
+                            })
+                        }} />
+                    }
+                    centerComponent={{ text: "Add a Post", style: { color: '#fff' } }}
+                    rightComponent={
+                        <Icon name="clear" title="Clear" onPress={() => {
+                            this.setState({            
+                                title: "",
+                                img: null,
+                                latitude: 0,
+                                longitude: 0
+                            })
+                        }} />
+                    }
+                />
+                <Input
                     onChangeText={(title) => this.setState({title})}
                     multiline = {false}
                     value = {this.state.title}
                     editable = {true}
                     autoCapitalize = {"words"}
+                    leftIcon={
+                        <Icon
+                            name = 'create'
+                            marginRight = {5}
+                        />
+                    }
+                    placeholder = "Add a title"
                 />
-                <Text>Dirty image</Text>
-                {this.state.img && (
-                <Image
-                    source={{ uri: this.state.img}}
-                    style={{ width: 300, height: 300 }}
-                />
-                )}
+                {this.state.img !== null ? 
+                    <Image
+                        source={{ uri: this.state.img}}
+                        style={{ width: Dimensions.get('screen').width, height: 300 }}
+                        PlaceholderContent={<ActivityIndicator />}
+                    />
+                    :
+                    <Image
+                        source={require('./images/placeholder.jpg')}
+                        style={{ width: Dimensions.get('screen').width, height: 300 }}
+                        PlaceholderContent={<ActivityIndicator />}
+                    />
+                }
                 <Button title="Choose Photo" onPress={this.pickImage} />
-                <Button title="Submit" onPress={this.handleSubmit} disabled={!(this.state.title.length && this.state.img !== null)}/>
-
+                <View style={{margin: 15}}>
+                    <Button title="Submit" onPress={this.handleSubmit} disabled={!(this.state.title.length && this.state.img !== null)}/>
+                </View>
             </Form>
         )
     }
 }
 
+const mapStateToProps = state => ({
+    userId: state.user.id
+})
+
 const mapDistpatchToProps = dispatch => ({
     submitPost: (post) => dispatch(addPost(post))
 })
 
-export default connect(null, mapDistpatchToProps)(AddForm)
+export default connect(mapStateToProps, mapDistpatchToProps)(AddForm)

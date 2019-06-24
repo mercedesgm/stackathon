@@ -5,9 +5,7 @@ import AddForm from '../components/AddForm'
 
 export default function LinksScreen(props) {
   return (
-    <ScrollView style={styles.container}>
-      <AddForm navigation={props.navigation}/>
-    </ScrollView>
+    <AddForm navigation={props.navigation}/>
   );
 }
 
