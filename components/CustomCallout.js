@@ -12,16 +12,16 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import Post from './Post'
+import {Card} from 'react-native-elements'
 
 const CustomCallout = (props) => {
     const post = props.post
     return (
-      <View>
-        <WebView source={{uri: post.dirtyImage}}
+      <Card title={post.title} containerStyle={{margin: 0, borderWidth: 0}}>
+        <WebView source={{uri: post.dirtyImage}} contentInset={{top: 0, left: 0}}
         scalesPageToFit={true}
         style={styles.img}/>
-        <Text>{post.title}</Text>
-      </View>
+      </Card>
     )
 }
 const styles = StyleSheet.create({

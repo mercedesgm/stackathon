@@ -57,7 +57,7 @@ export const addPost = (post, id) => {
     try {
       await axios.post(`http://${ip}/api/posts`, post)
       dispatch(getAllPosts())
-      // dispatch(getMyPosts(id))
+      dispatch(getMyPosts(id))
     } catch (error) {
       console.log(error)
     }

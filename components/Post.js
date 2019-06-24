@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-    Image,
     Platform,
     ScrollView,
     StyleSheet,
@@ -8,7 +7,8 @@ import {
     TouchableOpacity,
     View,
     Dimensions,
-    Button
+    Button,
+    ActivityIndicator
 } from 'react-native';
 import {connect} from 'react-redux'
 import {getPost, markClean} from '../store/posts'
@@ -16,6 +16,7 @@ import Comments from './Comments'
 import { RNS3 } from 'react-native-aws3'
 import {REACT_AWS3_ACCESS_KEY, REACT_AWS3_SECRET_ACCESS_KEY} from '../secrets'
 import * as ImagePicker from 'expo-image-picker'
+import {Header, Image, Icon} from 'react-native-elements'
 
 
 class Post extends React.Component {
@@ -26,6 +27,7 @@ class Post extends React.Component {
 
     componentDidMount() {
         this.props.renderPost(this.props.id)
+        this.interval = setInterval(() => this.props.renderPost(this.props.id), 2000)
     }
 
     handleSubmit = async () => {
@@ -62,29 +64,31 @@ class Post extends React.Component {
         if (post && post.title) {
             return (
                 <View style={styles.postWrapper}>
-                    <Text>{post.title}</Text>
-                    <ScrollView>
-                        <Image source={{uri: post.dirtyImage}} style={styles.img}/>
-                        {post.cleanImage !== null ? <Image source={{uri: post.cleanImage + "?" + new Date().getTime()}} style={styles.img} /> : null}
-                    </ScrollView>
-                    {post.cleanImage === null ?
-                        <Button
-                            title="Mark Clean" 
-                            onPress={() => {
-                                this.handleSubmit()
-                                setTimeout(() => this.props.renderPost(this.props.post.id), 200)
-                            }}
-                        />
-                        : null
-                    }
-                    <Comments comments={post.comments} id={post.id} /> 
-                    <Button
-                        onPress={() => {
-                            this.props.renderPost()
+                    <Header
+                        leftComponent={<Icon name="map" onPress={() => {
                             this.props.navigation.navigate('Home')
-                        }} 
-                        title="Close"
-                    />              
+                            this.props.renderPost()
+                            clearInterval(this.interval)
+                            
+                        }} />}
+                        centerComponent={{ text: post.title, style: { color: '#fff' } }}
+                    >
+                    </Header>
+                    <View style={{height: 300, flex: 0}}>
+                        <ScrollView horizontal={true} style={styles.imgWrapper}>
+                            <Image source={{uri: post.dirtyImage}} style={styles.img}  PlaceholderContent={<ActivityIndicator />} />
+                            {post.cleanImage !== null ? <Image source={{uri: post.cleanImage + "?" + new Date().getTime()}} style={styles.img}  PlaceholderContent={<ActivityIndicator />}/> : null}
+                        </ScrollView>
+                    </View>
+                    <Button
+                        title="Mark Clean" 
+                        onPress={() => {
+                            this.handleSubmit()
+                            setTimeout(() => this.props.renderPost(this.props.post.id), 200)
+                        }}
+                        disabled={!!post.cleanImage}
+                    />
+                    <Comments comments={post.comments} id={post.id} renderPost={this.props.renderPost} />            
                 </View>
             )
         } else {
@@ -115,11 +119,14 @@ const styles = StyleSheet.create({
     myComment: {
         alignSelf: "flex-end"
     },
+    imgWrapper: {
+        width: Dimensions.get("window").width,
+        margin: 0,
+        padding: 0,
+    },
     img: {
-        width: 400,
         height: 300,
-        borderColor: "#F44336",
-        borderWidth: 2,
+        width: 400
     }
 });
 

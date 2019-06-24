@@ -4,7 +4,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
   Dimensions,
@@ -13,6 +12,7 @@ import {
 import {connect} from 'react-redux'
 import {getMyPosts, deletePost} from '../store/posts'
 import {logout} from '../store/user'
+import { Header, Icon, Card, Text } from 'react-native-elements';
 
  
 class ProfileScreen extends React.Component {
@@ -23,24 +23,38 @@ class ProfileScreen extends React.Component {
   render() {
     return (
       <View>
-        <Text>Welcome, {this.props.user.email}</Text>
-        {this.props.posts.map(post => {
-          return (
-            <View key={post.id} style={styles.postWrapper}>
-              <Text
-                onPress={() => {
-                  console.log('hey')
-                  this.props.navigation.navigate('Post', {id: post.id})}
-                }
+        <Header
+          leftComponent={
+              <Icon name="map" onPress={() => {
+                  this.props.navigation.navigate('Home')
+              }} />
+          }
+          centerComponent={{ text: `Welcome, ${this.props.user.email}`, style: { color: '#fff' } }}
+          rightComponent={
+              <Text onPress={() => {
+                this.props.navigation.navigate('Login')
+                this.props.removeUser()
+              }}>Logout</Text>
+          }
+        />
+        <Text h3>My posts:</Text>
+        {this.props.posts.length ?
+          this.props.posts.map(post => {
+            return (
+              <Card
+                key={post.id}
+                image={{uri: post.dirtyImage}}
+                title={post.title}
               >
-                {post.title}
-              </Text>
-              <Image style={{width: 40, height: 30}} source={{uri: post.dirtyImage}} />
-              <Button title="Delete" onPress={() => this.props.delete(post.id, this.props.user.id)} />
-            </View>
-          )
-        })}
-        <Button title="Logout" onPress={() => this.props.removeUser()} />
+                <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}} >
+                  <Icon name="open-in-new" onPress={() => this.props.navigation.navigate('Post', {id: post.id})} />
+                  <Icon name="delete" onPress={() => this.props.delete(post.id, this.props.user.id)} />
+                </View>
+              </Card>
+            )
+          })
+          : <Text h2>No posts yet!</Text>
+        }
       </View>
     )
   }
