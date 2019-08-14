@@ -8,3 +8,6 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
+secrets.yaml
+.env
+secrets.js

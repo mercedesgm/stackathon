@@ -2,9 +2,10 @@ import { AppLoading } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import React, { useState } from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
+import {Provider} from 'react-redux'
+import store from './store'
 import AppNavigator from './navigation/AppNavigator';
 
 export default function App(props) {
@@ -20,13 +21,16 @@ export default function App(props) {
     );
   } else {
     return (
-      <View style={styles.container}>
-        {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-        <AppNavigator />
-      </View>
+      <Provider store={store}>
+        <View style={{width: Dimensions.get("screen").width, height: Dimensions.get("screen").height}}>
+          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+          <AppNavigator style={{position: "absolute", bottom: 0}}/>
+        </View>
+      </Provider>
     );
   }
 }
+
 
 async function loadResourcesAsync() {
   await Promise.all([
@@ -55,8 +59,4 @@ function handleFinishLoading(setLoadingComplete) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
 });

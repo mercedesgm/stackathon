@@ -8,109 +8,66 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Dimensions
 } from 'react-native';
-
+import {connect} from 'react-redux'
 import { MonoText } from '../components/StyledText';
+import {getAllPosts} from '../store/posts'
+import Map from '../components/Map'
+import { Icon } from 'react-native-elements'
 
-export default function HomeScreen() {
-  return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}>
-        <View style={styles.welcomeContainer}>
-          <Image
-            source={
-              __DEV__
-                ? require('../assets/images/robot-dev.png')
-                : require('../assets/images/robot-prod.png')
-            }
-            style={styles.welcomeImage}
+class HomeScreen extends React.Component {
+  componentDidMount() {
+    if (!this.props.user.id) {
+      return this.props.navigation.navigate('Login')
+    } 
+    this.props.getPosts()
+    this.interval = setInterval(() => this.props.getPosts(), 5000)
+  }
+  render () {
+    const posts = this.props.posts.allPosts
+    return (
+      <View>
+        <Map posts={posts}/>
+        <View style={{position: "absolute", top: 30, right: 10}}>
+          <Icon name="account-circle" reverse  
+            onPress={() => {
+              this.props.navigation.navigate('Profile')
+              clearInterval(this.interval)
+            }}
+          />
+          <Icon name="add-circle-outline" reverse
+            onPress={() => {
+              this.props.navigation.navigate('Add')
+              clearInterval(this.interval)
+            }}
           />
         </View>
-
-        <View style={styles.getStartedContainer}>
-          <DevelopmentModeNotice />
-
-          <Text style={styles.getStartedText}>Get started by opening</Text>
-
-          <View
-            style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-            <MonoText>screens/HomeScreen.js</MonoText>
-          </View>
-
-          <Text style={styles.getStartedText}>
-            Change this text and your app will automatically reload.
-          </Text>
-        </View>
-
-        <View style={styles.helpContainer}>
-          <TouchableOpacity onPress={handleHelpPress} style={styles.helpLink}>
-            <Text style={styles.helpLinkText}>
-              Help, it didn’t automatically reload!
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-
-      <View style={styles.tabBarInfoContainer}>
-        <Text style={styles.tabBarInfoText}>
-          This is a tab bar. You can edit it in:
-        </Text>
-
-        <View
-          style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-          <MonoText style={styles.codeHighlightText}>
-            navigation/MainTabNavigator.js
-          </MonoText>
-        </View>
       </View>
-    </View>
-  );
+    )
+  }
 }
+
+
+const mapStateToProps = state => ({
+  posts: state.posts,
+  user: state.user
+})
+
+const mapDispatchToProps = dispatch => ({
+  getPosts: () => dispatch(getAllPosts())
+})
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
+
 
 HomeScreen.navigationOptions = {
   header: null,
 };
 
-function DevelopmentModeNotice() {
-  if (__DEV__) {
-    const learnMoreButton = (
-      <Text onPress={handleLearnMorePress} style={styles.helpLinkText}>
-        Learn more
-      </Text>
-    );
-
-    return (
-      <Text style={styles.developmentModeText}>
-        Development mode is enabled: your app will be slower but you can use
-        useful development tools. {learnMoreButton}
-      </Text>
-    );
-  } else {
-    return (
-      <Text style={styles.developmentModeText}>
-        You are not in development mode: your app will run at full speed.
-      </Text>
-    );
-  }
-}
-
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/development-mode/'
-  );
-}
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    'https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes'
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
   },
   developmentModeText: {
