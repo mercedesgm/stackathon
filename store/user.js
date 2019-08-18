@@ -3,7 +3,7 @@ import axios from 'axios'
 const GOT_USER = 'GOT_USER';
 const REMOVE_USER = 'REMOVE_USER';
 
-const ip = '192.168.1.106:8080'
+const ip = //hard coded for development
 
 const defaultUser = {};
 
