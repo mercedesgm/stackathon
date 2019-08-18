@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const ip = '192.168.1.106:8080'
+const ip = //hard coded for development
 
 const GOT_MY_POSTS = 'GOT_MY_POSTS';
 const GOT_ALL_POSTS = 'GOT_ALL_POSTS';
